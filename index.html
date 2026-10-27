@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kubovy projekty</title>
+<meta name="description" content="Rozcestník her a aplikací – závody, kouzla, hon za pokladem a další.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1026; --bg2: #1a1446; --card: rgba(255,255,255,.06); --line: rgba(255,255,255,.12);
+    --ink: #f3f1ff; --muted: #b3aed6; --gold: #ffc94d; --pink: #ff6fae; --cyan: #5ee0ff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--ink); font-family: 'Nunito', system-ui, sans-serif;
+    background: radial-gradient(1200px 700px at 15% -10%, #3b1f7a 0%, transparent 60%),
+                radial-gradient(900px 600px at 100% 10%, #0f4a6e 0%, transparent 55%),
+                linear-gradient(180deg, var(--bg2), var(--bg) 60%);
+    background-attachment: fixed;
+  }
+  #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .wrap { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 56px 16px 48px; }
+
+  header { text-align: center; margin-bottom: 44px; }
+  .rocket { font-size: 56px; display: inline-block; animation: float 4s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-10px) rotate(-6deg); } }
+  h1 { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: clamp(36px, 7vw, 64px); margin: 8px 0 6px; line-height: 1.05;
+    background: linear-gradient(90deg, var(--gold), var(--pink) 55%, var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: var(--muted); font-size: clamp(16px, 2.4vw, 20px); margin: 0; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 26px; }
+  .card {
+    position: relative; display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    background: var(--card); border: 1px solid var(--line); border-radius: 22px; overflow: hidden;
+    backdrop-filter: blur(6px); transition: transform .25s ease, box-shadow .25s ease, border-color .25s;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  }
+  .card:hover, .card:focus-visible { transform: translateY(-6px) rotate(-.4deg); border-color: var(--accent);
+    box-shadow: 0 18px 50px rgba(0,0,0,.4), 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); outline: none; }
+  .shot { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #111; }
+  .shot img, .shot svg { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+  .card:hover .shot img, .card:hover .shot svg { transform: scale(1.05); }
+  .shot::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.45)); }
+  .emoji { position: absolute; left: 16px; bottom: -26px; z-index: 2; width: 56px; height: 56px; border-radius: 16px;
+    display: grid; place-items: center; font-size: 30px; background: var(--accent); box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+  .new { position: absolute; top: 14px; right: 14px; z-index: 2; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 14px;
+    padding: 4px 12px; border-radius: 999px; background: var(--gold); color: #2b1d00; box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    animation: wiggle 2.4s ease-in-out infinite; }
+  @keyframes wiggle { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-8deg); } 90% { transform: rotate(8deg); } 95% { transform: rotate(-4deg); } }
+  .body { padding: 36px 20px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .body h2 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 26px; margin: 0; }
+  .body p { margin: 0; color: var(--muted); line-height: 1.5; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; }
+  .tag { font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid var(--line); }
+  .go { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-weight: 700; color: var(--accent); }
+  .go .date { color: var(--muted); font-weight: 600; font-size: 13px; }
+  .go .arrow { transition: transform .2s; }
+  .card:hover .arrow { transform: translateX(5px); }
+
+  footer { text-align: center; color: var(--muted); font-size: 14px; margin-top: 48px; }
+  footer a { color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="wrap">
+  <header>
+    <div class="rocket">🚀</div>
+    <h1>Kubovy projekty</h1>
+    <p class="sub">Hry, kouzla a pokusy – klikni a hraj!</p>
+  </header>
+  <main class="grid" id="grid"></main>
+  <footer>Vyrobeno doma s láskou · <a href="https://github.com/Kubas92">GitHub</a></footer>
+</div>
+
+<template id="treasure">
+  <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa pokladu">
+    <defs>
+      <radialGradient id="tg" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#fbf4e1"/><stop offset="1" stop-color="#e3d3a8"/></radialGradient>
+    </defs>
+    <rect width="320" height="180" fill="#1b4332"/>
+    <path d="M28 18 L292 14 L300 160 L22 166 Z" fill="url(#tg)" stroke="#b08900" stroke-width="2"/>
+    <g fill="#2d6a4f" opacity=".85">
+      <circle cx="70" cy="60" r="12"/><circle cx="84" cy="52" r="10"/><circle cx="62" cy="48" r="9"/>
+      <circle cx="245" cy="120" r="11"/><circle cx="258" cy="112" r="9"/>
+    </g>
+    <path d="M200 40 q14 -12 30 0 q16 12 30 0" stroke="#5aa9c9" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M60 130 C 100 140, 110 90, 150 100 S 210 70, 232 64" stroke="#a4342a" stroke-width="3.5" stroke-dasharray="7 7" fill="none" stroke-linecap="round"/>
+    <g stroke="#a4342a" stroke-width="6" stroke-linecap="round"><path d="M226 54 l16 16 M242 54 l-16 16"/></g>
+    <circle cx="60" cy="130" r="7" fill="#1b4332"/><circle cx="60" cy="130" r="3" fill="#fbf4e1"/>
+    <g transform="translate(272 34)"><circle r="16" fill="#fff8e6" stroke="#b08900" stroke-width="2"/>
+      <path d="M0 -12 L4 0 L0 12 L-4 0 Z" fill="#a4342a"/><text y="-17" text-anchor="middle" font-size="9" font-family="sans-serif" fill="#1b4332">S</text></g>
+    <text x="160" y="155" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="18" fill="#1b4332">💰 Hon za pokladem</text>
+  </svg>
+</template>
+
+<script>
+// Nový projekt = přidat položku sem (nejnovější se řadí nahoru) a náhled do img/
+const PROJECTS = [
+  {
+    name: 'Turbo Závody', emoji: '🏎️', url: 'https://kubas92.github.io/turbo-zavody/', img: 'img/turbo-zavody.jpg',
+    added: '2026-10-27', accent: '#ff5a3c',
+    text: '3D závody pro dva hráče na rozdělené obrazovce. Tři tratě – zelený okruh, Dino park a strašidelný Halloween.',
+    tags: ['🎮 2 hráči', '🕹️ ovladače', '📺 na televizi'],
+  },
+  {
+    name: 'AR CAD viewer', emoji: '🥽', url: 'https://kubas92.github.io/ar-cad-viewer/', img: 'img/ar-cad-viewer.jpg',
+    added: '2026-10-09', accent: '#4d8dff',
+    text: 'Náhled 3D modelů v rozšířené realitě ve skutečné velikosti – postav si skříň nebo motor rovnou do pokoje.',
+    tags: ['📱 mobil', '🥽 AR'],
+  },
+  {
+    name: 'Kouzelnická akademie', emoji: '🪄', url: 'https://kubas92.github.io/harry-potter-wand/', img: 'img/harry-potter-wand.jpg',
+    added: '2026-10-08', accent: '#b98cff',
+    text: 'Telefon jako kouzelnická hůlka: nauč se kouzla gesty, vyvolej Patrona, zažeň bubáka a trénuj famfrpál.',
+    tags: ['📱 mobil', '✨ gesta', '⚡ Harry Potter'],
+  },
+  {
+    name: 'Hon za pokladem', emoji: '💰', url: 'https://kubas92.github.io/luda-navigace/', svg: 'treasure',
+    added: '2026-09-19', accent: '#3fb57a',
+    text: 'Schovej poklad venku a druhý ho najde podle GPS navigace v telefonu – teplo, přihořívá, hoří!',
+    tags: ['📱 mobil', '📍 GPS', '🌳 venku'],
+  },
+];
+
+const NEW_DAYS = 10;
+const grid = document.getElementById('grid');
+const fmt = d => new Date(d).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' });
+[...PROJECTS].sort((a, b) => b.added.localeCompare(a.added)).forEach(p => {
+  const a = document.createElement('a');
+  a.className = 'card';
+  a.href = p.url;
+  a.style.setProperty('--accent', p.accent);
+  const isNew = (Date.now() - new Date(p.added)) / 864e5 < NEW_DAYS;
+  const shot = p.img
+    ? `<img src="${p.img}" alt="Náhled: ${p.name}" loading="lazy">`
+    : document.getElementById(p.svg).innerHTML;
+  a.innerHTML = `
+    <div class="shot">${shot}${isNew ? '<span class="new">NOVÉ</span>' : ''}</div>
+    <div style="position:relative"><span class="emoji">${p.emoji}</span></div>
+    <div class="body">
+      <h2>${p.name}</h2>
+      <p>${p.text}</p>
+      <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="go"><span class="date">${fmt(p.added)}</span><span>Spustit <span class="arrow">→</span></span></div>
+    </div>`;
+  grid.appendChild(a);
+});
+
+// jemně blikající hvězdy v pozadí
+const c = document.getElementById('stars'), x = c.getContext('2d');
+let stars = [];
+function resize() {
+  c.width = innerWidth * devicePixelRatio; c.height = innerHeight * devicePixelRatio;
+  stars = Array.from({ length: Math.round(innerWidth * innerHeight / 9000) }, () => ({
+    x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.4 + .3, p: Math.random() * 6.28,
+  }));
+}
+function draw(t) {
+  x.clearRect(0, 0, c.width, c.height);
+  for (const s of stars) {
+    x.globalAlpha = .35 + .35 * Math.sin(t / 900 + s.p);
+    x.fillStyle = '#fff';
+    x.beginPath(); x.arc(s.x, s.y, s.r * devicePixelRatio, 0, 6.28); x.fill();
+  }
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(draw);
+}
+addEventListener('resize', resize);
+resize();
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
